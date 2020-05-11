@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Todo App</title>
+	<style>
+		#error {
+			display: none;
+		}
+		.myButton {
+			box-shadow:inset 0px 1px 0px 0px #ffffff;
+			background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+			background-color:#ffffff;
+			border-radius:6px;
+			border:1px solid #dcdcdc;
+			display:inline-block;
+			cursor:pointer;
+			color:#666666;
+			font-family:Arial;
+			font-size:15px;
+			font-weight:bold;
+			padding:6px 24px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #ffffff;
+		}
+		.myButton:hover {
+			background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+			background-color:#f6f6f6;
+		}
+		.myButton:active {
+			position:relative;
+			top:1px;
+		}
+		.form-field {
+			margin:unset;
+			display: block;
+			width: 20%;
+			padding: 8px 16px;
+			line-height: 25px;
+			font-size: 14px;
+			font-weight: 500;
+			font-family: inherit;
+			border-radius: 6px;
+			border: 1px solid;
+			background: whitesmoke;
+			transition: border .3s ease;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="error" class="hidden">Something went wrong!</div>
+	<form id="form">
+		<input class="form-field" type="text" id="description" name="description" />
+		<input class="myButton" type="submit" value="Create" />
+	</form>
+	<ul id="todos">
+		{% for d in data %}
+		<li>{{ d.description }}</li>
+		{% endfor %}
+	</ul>
+	<script>
+		const descInput = document.getElementById('description');
+		document.getElementById('form').onsubmit = function (e) {
+			e.preventDefault();
+			const desc = descInput.value;
+			descInput.value = '';
+			fetch('/todos/create', {
+				method: 'POST',
+				body: JSON.stringify({
+					'description': desc,
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			})
+				.then(response => response.json())
+				.then(jsonResponse => {
+					console.log('response', jsonResponse);
+					li = document.createElement('li');
+					li.innerText = desc;
+					document.getElementById('todos').appendChild(li);
+					document.getElementById('error').className = 'hidden';
+				})
+				.catch(function () {
+					document.getElementById('error').className = '';
+				})
+		}
+	</script>
+</body>
+</html>
