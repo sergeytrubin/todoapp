@@ -44,7 +44,7 @@ def create():
     finally:
         db.session.close()
     if error:
-        abort (400)
+        abort(400)
     else:
         return jsonify(body)
 
